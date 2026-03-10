@@ -1,0 +1,48 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title class="dialog-title">
+    <mat-icon class="title-icon">assignment_turned_in</mat-icon>
+    Confirm Your Decisions
+  </h2>
+
+  <mat-dialog-content class="dialog-content">
+    <div class="summary-grid">
+      <div class="summary-item summary-item--accepted">
+        <span class="summary-count">{{ data.accepted }}</span>
+        <span class="summary-label">Accepted</span>
+      </div>
+      <div class="summary-item summary-item--declined">
+        <span class="summary-count">{{ data.declined }}</span>
+        <span class="summary-label">Declined</span>
+      </div>
+      <div class="summary-item summary-item--pending">
+        <span class="summary-count">{{ data.pending }}</span>
+        <span class="summary-label">Pending</span>
+      </div>
+    </div>
+
+    @if (data.pending > 0) {
+      <div class="warning-banner" role="alert">
+        <mat-icon aria-hidden="true">warning</mat-icon>
+        <span>
+          {{ data.pending }} location{{ data.pending > 1 ? 's are' : ' is' }} still pending.
+          They will not be included in your submission.
+        </span>
+      </div>
+    }
+
+    <p class="confirm-text">
+      Once submitted, your decisions will be sent to the EPCON coordination team.
+      This action cannot be undone.
+    </p>
+  </mat-dialog-content>
+
+  <mat-divider />
+
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-stroked-button (click)="cancel()">Cancel</button>
+    <button mat-flat-button color="primary" (click)="confirm()">
+      <mat-icon>send</mat-icon>
+      Submit Decisions
+    </button>
+  </mat-dialog-actions>
+</div>

@@ -1,0 +1,106 @@
+@if (store.selectedOpportunity(); as opp) {
+  <div
+    class="detail-panel epcon-card"
+    role="dialog"
+    aria-modal="false"
+    [attr.aria-label]="(opp.activityType | activityType) + ' — edit details'"
+  >
+    <!-- Header -->
+    <div class="detail-header">
+      <div class="detail-title-row">
+        <div class="detail-icon-wrap detail-icon-wrap--{{ opp.activityType.toLowerCase() }}">
+          <mat-icon aria-hidden="true">{{ getActivityIcon(opp.activityType) }}</mat-icon>
+        </div>
+        <div class="detail-title-group">
+          <span class="detail-type">{{ opp.activityType | activityType }}</span>
+          @if (store.selectedLocation(); as loc) {
+            <span class="detail-location">
+              <mat-icon class="loc-icon" aria-hidden="true">location_on</mat-icon>
+              {{ loc.name }}, {{ loc.countryName }}
+            </span>
+          }
+        </div>
+        <button
+          mat-icon-button
+          class="close-btn"
+          aria-label="Close detail panel"
+          (click)="close()"
+        >
+          <mat-icon aria-hidden="true">close</mat-icon>
+        </button>
+      </div>
+      <app-status-badge [status]="opp.status" />
+    </div>
+
+    @if (opp.status === 'ACCEPTED_BY_OTHER') {
+      <div class="taken-notice" role="alert">
+        <mat-icon aria-hidden="true">lock</mat-icon>
+        This position has been accepted by another worker and cannot be modified.
+      </div>
+    } @else {
+      <div class="detail-section-label">Adjust details before accepting</div>
+
+      <form
+        [formGroup]="form"
+        class="detail-form"
+        aria-label="Edit date and target for this assignment"
+        (ngSubmit)="accept()"
+      >
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Scheduled Date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="datepicker"
+            formControlName="scheduledDate"
+            [min]="today"
+            aria-required="true"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="datepicker" />
+          <mat-datepicker #datepicker />
+          @if (form.get('scheduledDate')?.hasError('required') && form.get('scheduledDate')?.touched) {
+            <mat-error>Date is required</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Target People Count</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="targetPeopleCount"
+            min="1"
+            max="10000"
+            aria-required="true"
+          />
+          <mat-icon matSuffix aria-hidden="true">people</mat-icon>
+          @if (form.get('targetPeopleCount')?.hasError('required') && form.get('targetPeopleCount')?.touched) {
+            <mat-error>Count is required</mat-error>
+          }
+          @if (form.get('targetPeopleCount')?.hasError('min')) {
+            <mat-error>Minimum is 1</mat-error>
+          }
+          @if (form.get('targetPeopleCount')?.hasError('max')) {
+            <mat-error>Maximum is 10,000</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="form.invalid"
+            [attr.aria-disabled]="form.invalid"
+          >
+            <mat-icon aria-hidden="true">check_circle</mat-icon>
+            Accept
+          </button>
+          <button mat-stroked-button color="warn" type="button" (click)="decline()">
+            <mat-icon aria-hidden="true">cancel</mat-icon>
+            Decline
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+}

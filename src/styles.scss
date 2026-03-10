@@ -1,0 +1,100 @@
+@use '@angular/material' as mat;
+
+// ── Color palette ────────────────────────────────────────────────────────────
+$epcon-primary: mat.m2-define-palette(mat.$m2-cyan-palette, 800);   // #0097a7 — readable on white
+$epcon-accent:  mat.m2-define-palette(mat.$m2-teal-palette, 700);   // #00796b
+$epcon-warn:    mat.m2-define-palette(mat.$m2-red-palette, 600);
+
+$epcon-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $epcon-primary,
+    accent:  $epcon-accent,
+    warn:    $epcon-warn,
+  ),
+  typography: mat.m2-define-typography-config(
+    $font-family: 'Roboto, "Helvetica Neue", sans-serif',
+  ),
+  density: 0,
+));
+
+@include mat.all-component-themes($epcon-theme);
+
+// ── CSS custom properties ────────────────────────────────────────────────────
+:root {
+  --epcon-accepted:    #4caf50;
+  --epcon-declined:    #f44336;
+  --epcon-pending:     #2196f3;
+  --epcon-taken:       #607d8b;
+
+  --epcon-bg:          #f4f6fb;
+  --epcon-surface:     #ffffff;
+  --epcon-surface-2:   #eef1f7;
+  --epcon-border:      #dde2ee;
+  --epcon-text:        #1a1d2e;
+  --epcon-text-muted:  #6b7594;
+  --epcon-cyan:        #0097a7;
+  --epcon-teal:        #00796b;
+}
+
+// ── Reset / base ─────────────────────────────────────────────────────────────
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+  background-color: var(--epcon-bg);
+  color: var(--epcon-text);
+}
+
+* { box-sizing: border-box; }
+
+// ── Material overrides ───────────────────────────────────────────────────────
+.mat-mdc-dialog-container {
+  --mdc-dialog-container-color: var(--epcon-surface);
+}
+
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: var(--epcon-surface-2);
+  --mdc-snackbar-supporting-text-color: var(--epcon-text);
+}
+
+.mdc-list-item {
+  --mdc-list-list-item-label-text-color: var(--epcon-text);
+}
+
+// ── Utility classes ──────────────────────────────────────────────────────────
+
+// Visually hidden but available to screen readers
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.epcon-card {
+  background: var(--epcon-surface);
+  border: 1px solid var(--epcon-border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.status-accepted { color: var(--epcon-accepted); }
+.status-declined { color: var(--epcon-declined); }
+.status-pending  { color: var(--epcon-pending);  }
+.status-taken    { color: var(--epcon-taken);    }
+
+// Leaflet light overrides
+.leaflet-container {
+  background: #e8ecf2;
+}
+.leaflet-control-zoom a {
+  background-color: var(--epcon-surface) !important;
+  color: var(--epcon-text) !important;
+  border-color: var(--epcon-border) !important;
+}

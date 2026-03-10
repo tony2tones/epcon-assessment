@@ -1,0 +1,121 @@
+.detail-panel {
+  background: var(--epcon-surface) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.13);
+  border: 1px solid var(--epcon-border);
+}
+
+// ── Header ─────────────────────────────────────────────────────────────────
+.detail-header {
+  margin-bottom: 12px;
+}
+
+.detail-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.detail-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(0, 151, 167, 0.1);
+  color: var(--epcon-cyan);
+
+  .mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+  &--tb_screening       { background: rgba(33, 150, 243, 0.12);  color: #1565c0; }
+  &--vaccination        { background: rgba(76, 175, 80, 0.12);   color: #2e7d32; }
+  &--malaria_prevention { background: rgba(255, 152, 0, 0.12);   color: #e65100; }
+  &--nutrition_survey   { background: rgba(156, 39, 176, 0.12);  color: #6a1b9a; }
+}
+
+.detail-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.detail-type {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--epcon-text);
+  line-height: 1.3;
+}
+
+.detail-location {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.78rem;
+  color: var(--epcon-text-muted);
+}
+
+.loc-icon {
+  font-size: 13px;
+  width: 13px;
+  height: 13px;
+  color: var(--epcon-cyan);
+}
+
+.close-btn {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  color: var(--epcon-text-muted);
+
+  .mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
+
+// ── Taken notice ──────────────────────────────────────────────────────────
+.taken-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--epcon-surface-2);
+  border: 1px solid var(--epcon-border);
+  border-left: 3px solid var(--epcon-taken);
+  border-radius: 6px;
+  color: var(--epcon-taken);
+  font-size: 0.8rem;
+
+  .mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
+
+// ── Section label ─────────────────────────────────────────────────────────
+.detail-section-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--epcon-text-muted);
+  margin-bottom: 10px;
+}
+
+// ── Form ──────────────────────────────────────────────────────────────────
+.detail-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+
+  button { flex: 1; }
+}

@@ -1,0 +1,90 @@
+.acceptance-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--epcon-bg);
+}
+
+.epcon-toolbar {
+  background: var(--epcon-surface) !important;
+  border-bottom: 1px solid var(--epcon-border);
+  flex-shrink: 0;
+  gap: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+
+  .logo {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--epcon-cyan);
+    letter-spacing: 2px;
+  }
+
+  .toolbar-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--epcon-border);
+    flex-shrink: 0;
+  }
+
+  .toolbar-subtitle {
+    font-size: 0.85rem;
+    color: var(--epcon-text-muted);
+    flex: 1;
+  }
+
+  .worker-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px 4px 4px;
+    background: var(--epcon-surface-2);
+    border: 1px solid var(--epcon-border);
+    border-radius: 20px;
+  }
+
+  .worker-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--epcon-cyan);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .worker-name {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--epcon-text);
+  }
+}
+
+.main-container {
+  flex: 1;
+  height: calc(100vh - 64px);
+  background: transparent;
+
+  .mat-drawer-container { background: transparent; }
+}
+
+.location-sidenav {
+  width: 360px;
+  background: var(--epcon-surface) !important;
+  border-left: 1px solid var(--epcon-border) !important;
+  border-right: none;
+}
+
+.map-content {
+  position: relative;
+}
+
+.detail-overlay {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+  width: 340px;
+}

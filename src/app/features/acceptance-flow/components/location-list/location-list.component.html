@@ -1,0 +1,119 @@
+<div class="sidebar" role="complementary" aria-label="Location assignments panel">
+
+  @if (store.selectedLocation(); as loc) {
+    <!-- ── Opportunity list for selected area ── -->
+    <div class="sidebar-header">
+      <button
+        mat-icon-button
+        class="back-btn"
+        aria-label="Back to area list"
+        (click)="store.selectLocation(null)"
+      >
+        <mat-icon aria-hidden="true">arrow_back</mat-icon>
+      </button>
+      <div class="header-text">
+        <span class="sidebar-title">{{ loc.name }}</span>
+        <span class="sidebar-sub">
+          {{ loc.countryName }} &middot; {{ loc.opportunities.length }} assignment{{ loc.opportunities.length !== 1 ? 's' : '' }}
+        </span>
+      </div>
+    </div>
+
+    @if (loc.description) {
+      <div class="area-desc-banner">
+        <mat-icon class="desc-icon" aria-hidden="true">info_outline</mat-icon>
+        {{ loc.description }}
+      </div>
+    }
+
+    <mat-divider />
+
+    <ul class="list-scroll" role="list" [attr.aria-label]="'Assignments in ' + loc.name" style="list-style:none;margin:0;padding:0">
+      @for (opp of loc.opportunities; track opp.id) {
+        <li role="listitem">
+          <div
+            class="opp-card"
+            [class.opp-card--selected]="store.selectedOpportunityId() === opp.id"
+            [class.opp-card--taken]="opp.status === 'ACCEPTED_BY_OTHER'"
+            [class.opp-card--accepted]="opp.status === 'ACCEPTED'"
+            [class.opp-card--declined]="opp.status === 'DECLINED'"
+          >
+            <!-- Clickable card body opens detail panel for editing -->
+            <button
+              class="opp-card-body"
+              (click)="selectOpportunity(opp)"
+              [attr.aria-label]="(opp.activityType | activityType) + ', status: ' + opp.status + '. Click to edit details.'"
+              [attr.aria-pressed]="store.selectedOpportunityId() === opp.id"
+              [attr.aria-disabled]="opp.status === 'ACCEPTED_BY_OTHER'"
+            >
+              <div class="opp-icon-wrap opp-icon-wrap--{{ opp.activityType.toLowerCase() }}">
+                <mat-icon aria-hidden="true">{{ getActivityIcon(opp.activityType) }}</mat-icon>
+              </div>
+
+              <div class="opp-info">
+                <span class="opp-type">{{ opp.activityType | activityType }}</span>
+                <div class="opp-meta">
+                  <span class="opp-meta-item">
+                    <mat-icon class="meta-icon" aria-hidden="true">calendar_today</mat-icon>
+                    {{ opp.scheduledDate }}
+                  </span>
+                  <span class="opp-meta-item">
+                    <mat-icon class="meta-icon" aria-hidden="true">people</mat-icon>
+                    {{ opp.targetPeopleCount | number }} people
+                  </span>
+                </div>
+              </div>
+
+              <app-status-badge [status]="opp.status" />
+            </button>
+
+            @if (opp.status !== 'ACCEPTED_BY_OTHER') {
+              <div class="opp-actions" role="group" [attr.aria-label]="'Actions for ' + (opp.activityType | activityType)">
+                <button
+                  class="opp-action-btn opp-action-btn--accept"
+                  [class.active]="opp.status === 'ACCEPTED'"
+                  [attr.aria-label]="'Accept ' + (opp.activityType | activityType)"
+                  [attr.aria-pressed]="opp.status === 'ACCEPTED'"
+                  (click)="quickAccept($event, loc, opp)"
+                >
+                  <mat-icon aria-hidden="true">check</mat-icon>
+                  Accept
+                </button>
+                <button
+                  class="opp-action-btn opp-action-btn--decline"
+                  [class.active]="opp.status === 'DECLINED'"
+                  [attr.aria-label]="'Decline ' + (opp.activityType | activityType)"
+                  [attr.aria-pressed]="opp.status === 'DECLINED'"
+                  (click)="quickDecline($event, loc.id, opp.id)"
+                >
+                  <mat-icon aria-hidden="true">close</mat-icon>
+                  Decline
+                </button>
+                <button
+                  class="opp-edit-btn"
+                  [attr.aria-label]="'Edit details for ' + (opp.activityType | activityType)"
+                  matTooltip="Edit date & target count"
+                  (click)="selectOpportunity(opp)"
+                >
+                  <mat-icon aria-hidden="true">edit</mat-icon>
+                </button>
+              </div>
+            }
+
+            @if (opp.status === 'ACCEPTED_BY_OTHER') {
+              <div class="opp-taken-note" role="status">
+                <mat-icon aria-hidden="true">lock</mat-icon>
+                Already accepted by another worker
+              </div>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+
+  } @else {
+    <app-area-overview />
+  }
+
+  <app-submit-actions />
+</div>

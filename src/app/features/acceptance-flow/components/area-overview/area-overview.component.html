@@ -1,0 +1,97 @@
+
+        <!-- ── Area overview ── -->
+        <div class="sidebar-header">
+          <span class="sidebar-title" id="sidebar-heading">Assigned Locations</span>
+          <span class="sidebar-count" [attr.aria-label]="store.filteredLocations().length + ' locations'">
+            {{ store.filteredLocations().length }}
+          </span>
+        </div>
+
+        <div class="summary-bar" role="status" aria-live="polite" aria-label="Decision summary">
+          <div class="summary-chip summary-chip--pending">
+            <span class="chip-count">{{ store.statusSummary().pending }}</span>
+            <span class="chip-label">Pending</span>
+          </div>
+          <div class="summary-chip summary-chip--accepted">
+            <span class="chip-count">{{ store.statusSummary().accepted }}</span>
+            <span class="chip-label">Accepted</span>
+          </div>
+          <div class="summary-chip summary-chip--declined">
+            <span class="chip-count">{{ store.statusSummary().declined }}</span>
+            <span class="chip-label">Declined</span>
+          </div>
+        </div>
+
+        @if (store.countryFilter()) {
+          <div class="filter-banner">
+            <mat-icon class="filter-icon" aria-hidden="true">filter_list</mat-icon>
+            <span>Filtered: {{ store.countryFilter() }}</span>
+            <button
+              mat-icon-button
+              class="clear-filter-btn"
+              [attr.aria-label]="'Clear country filter: ' + store.countryFilter()"
+              (click)="clearFilter()"
+            >
+              <mat-icon aria-hidden="true">close</mat-icon>
+            </button>
+          </div>
+        }
+
+        <mat-divider />
+
+        <div
+          class="list-scroll"
+          role="status"
+          aria-live="polite"
+          [attr.aria-busy]="store.isLoading()"
+        >
+          @if (store.isLoading()) {
+            <div class="loading-state">
+              <mat-icon aria-hidden="true">hourglass_empty</mat-icon>
+              Loading locations…
+            </div>
+          } @else {
+            <div class="area-list" role="list" aria-labelledby="sidebar-heading">
+              @for (loc of store.filteredLocations(); track loc.id) {
+                <div role="listitem">
+                  <button
+                    class="area-card"
+                    (click)="store.selectLocation(loc.id)"
+                    [attr.aria-label]="loc.name + ', ' + loc.countryName + ', ' + loc.opportunities.length + ' assignments'"
+                  >
+                    <div class="area-card-top">
+                      <div class="area-card-title-block">
+                        <span class="area-name">{{ loc.name }}</span>
+                        <span class="area-country">
+                          <mat-icon class="country-icon" aria-hidden="true">location_on</mat-icon>
+                          {{ loc.countryName }}
+                        </span>
+                      </div>
+                      <mat-icon class="area-chevron" aria-hidden="true">chevron_right</mat-icon>
+                    </div>
+
+                    @if (loc.description) {
+                      <p class="area-desc">{{ loc.description }}</p>
+                    }
+
+                    <div class="area-card-footer">
+                      <div class="status-dots" aria-hidden="true">
+                        @for (opp of loc.opportunities; track opp.id) {
+                          <span
+                            class="status-dot status-dot--{{ opp.status | statusClass }}"
+                            [matTooltip]="(opp.activityType | activityType) + ': ' + opp.status"
+                          ></span>
+                        }
+                      </div>
+                      <span class="area-opp-label">
+                        {{ loc.opportunities.length }} assignment{{ loc.opportunities.length !== 1 ? 's' : '' }}
+                      </span>
+                    </div>
+                  </button>
+                </div>
+              } @empty {
+                <div class="empty-state">No areas match the current filter.</div>
+              }
+            </div>
+          }
+        </div>
