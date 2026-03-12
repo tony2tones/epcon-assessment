@@ -4,10 +4,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AcceptanceStore } from '../../../../core/services/acceptance.store';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
 import { ActivityTypePipe } from '../../../../shared/pipes/activity-type.pipe';
-import { AssignedLocation, JobOpportunity, ActivityType, LocationFormValue } from '../../../../core/models/location.model';
+import { AssignedLocation, JobOpportunity, LocationFormValue } from '../../../../core/models/location.model';
 import { AreaOverviewComponent } from '../area-overview/area-overview.component';
 import { SubmitActionsComponent } from '../submit-actions/submit-actions.component';
 import { getActivityIcon } from '../../../../shared/constants/activity-icons.const';
@@ -21,6 +22,7 @@ import { getActivityIcon } from '../../../../shared/constants/activity-icons.con
     MatIconModule,
     MatDividerModule,
     MatTooltipModule,
+    MatProgressSpinnerModule,
     StatusBadgeComponent,
     ActivityTypePipe,
     AreaOverviewComponent,

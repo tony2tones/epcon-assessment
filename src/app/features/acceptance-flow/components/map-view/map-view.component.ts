@@ -15,7 +15,7 @@ import { MAP_STATUS_COLORS, MAP_MARKER_BORDER, MAP_COUNTRY_COLORS } from '../../
 
 /** Derive a single display color from all opportunities in an area */
 function aggregateColor(loc: AssignedLocation): string {
-  const opps = loc.opportunities;
+  const opps = loc.opportunities ?? [];
   const pending  = opps.filter(o => o.status === 'PENDING').length;
   const accepted = opps.filter(o => o.status === 'ACCEPTED').length;
   const declined = opps.filter(o => o.status === 'DECLINED').length;
@@ -48,12 +48,12 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
   private geoJsonLayer!: L.GeoJSON;
 
   constructor() {
-    // Re-render markers when locations or selected area changes
+    // Re-render markers when locations (including loaded opportunities) or selected area changes
     effect(() => {
       const locations = this.store.locations();
       const selectedId = this.store.selectedLocationId();
       if (this.map) {
-        this.renderMarkers(locations, selectedId);
+        this.ngZone.runOutsideAngular(() => this.renderMarkers(locations, selectedId));
       }
     });
 
@@ -167,8 +167,8 @@ export class MapViewComponent implements AfterViewInit, OnDestroy {
     for (const loc of locations) {
       const isSelected = loc.id === selectedId;
       const color = aggregateColor(loc);
-      const oppCount = loc.opportunities.length;
-      const pending = loc.opportunities.filter(o => o.status === 'PENDING').length;
+      const oppCount = (loc.opportunities ?? []).length;
+      const pending  = (loc.opportunities ?? []).filter(o => o.status === 'PENDING').length;
 
       const marker = L.circleMarker([loc.coordinates.lat, loc.coordinates.lng], {
         radius: isSelected ? 16 : 10,

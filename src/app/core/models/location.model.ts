@@ -18,7 +18,7 @@ export interface AssignedLocation {
   countryName: string;
   coordinates: { lat: number; lng: number };
   description?: string;
-  opportunities: JobOpportunity[];
+  opportunities?: JobOpportunity[];
 }
 
 export interface LocationFormValue {
