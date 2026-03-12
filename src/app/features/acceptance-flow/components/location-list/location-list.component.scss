@@ -448,6 +448,13 @@
   .mat-icon { font-size: 14px; width: 14px; height: 14px; }
 }
 
+// ── Opportunities loading ─────────────────────────────────────────────────────
+.opps-loading {
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
 // ── States ────────────────────────────────────────────────────────────────────
 .loading-state {
   display: flex;

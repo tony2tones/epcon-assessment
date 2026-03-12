@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError, delay } from 'rxjs';
-import { AssignedLocation, AcceptanceToken, SubmitPayload } from '../models/location.model';
+import { AssignedLocation, JobOpportunity, AcceptanceToken, SubmitPayload } from '../models/location.model';
 
 const MOCK_LOCATIONS: AssignedLocation[] = [
   {
@@ -126,12 +126,17 @@ export class LocationService {
 
   getLocations(token: string): Observable<AssignedLocation[]> {
     if (token === MOCK_TOKEN.token) {
-      return of(MOCK_LOCATIONS.map(l => ({
-        ...l,
-        opportunities: [...l.opportunities],
-      }))).pipe(delay(400));
+      return of(MOCK_LOCATIONS.map(({ opportunities: _opps, ...rest }) => ({ ...rest }))).pipe(delay(400));
     }
     return throwError(() => new Error('Invalid token'));
+  }
+
+  getOpportunities(locationId: string): Observable<JobOpportunity[]> {
+    const loc = MOCK_LOCATIONS.find(l => l.id === locationId);
+    if (!loc) {
+      return throwError(() => new Error(`Unknown locationId: ${locationId}`));
+    }
+    return of([...(loc.opportunities ?? [])]).pipe(delay(300));
   }
 
   submitDecisions(payload: SubmitPayload): Observable<{ success: boolean }> {

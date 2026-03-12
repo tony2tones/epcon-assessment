@@ -1,4 +1,4 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import {
   AssignedLocation,
   JobOpportunity,
@@ -7,9 +7,11 @@ import {
   AcceptanceDecision,
   SubmitPayload,
 } from '../models/location.model';
+import { LocationService } from './location.service';
 
 @Injectable({ providedIn: 'root' })
 export class AcceptanceStore {
+  private readonly locationService = inject(LocationService);
   // ── Raw signals ────────────────────────────────────────────────────────────
   readonly locations = signal<AssignedLocation[]>([]);
   readonly selectedLocationId = signal<string | null>(null);
@@ -19,6 +21,8 @@ export class AcceptanceStore {
   readonly isLoading = signal(true);
   readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly loadedLocationIds = signal<Set<string>>(new Set());
+  readonly loadingLocationIds = signal<Set<string>>(new Set());
 
   // ── Computed ───────────────────────────────────────────────────────────────
   readonly selectedLocation = computed(() => {
@@ -30,8 +34,16 @@ export class AcceptanceStore {
     const oppId = this.selectedOpportunityId();
     const loc = this.selectedLocation();
     if (!oppId || !loc) return null;
-    return loc.opportunities.find(o => o.id === oppId) ?? null;
+    return (loc.opportunities ?? []).find(o => o.id === oppId) ?? null;
   });
+
+  isOpportunitiesLoaded(locationId: string): boolean {
+    return this.loadedLocationIds().has(locationId);
+  }
+
+  isOpportunitiesLoading(locationId: string): boolean {
+    return this.loadingLocationIds().has(locationId);
+  }
 
   readonly filteredLocations = computed(() => {
     const filter = this.countryFilter();
@@ -42,7 +54,7 @@ export class AcceptanceStore {
 
   /** Aggregate status across ALL opportunities in ALL locations */
   readonly statusSummary = computed(() => {
-    const all = this.locations().flatMap(l => l.opportunities);
+    const all = this.locations().flatMap(l => l.opportunities ?? []);
     return {
       pending:         all.filter(o => o.status === 'PENDING').length,
       accepted:        all.filter(o => o.status === 'ACCEPTED').length,
@@ -58,14 +70,14 @@ export class AcceptanceStore {
 
   readonly hasAnyDecision = computed(() =>
     this.locations().some(l =>
-      l.opportunities.some(o => o.status === 'ACCEPTED' || o.status === 'DECLINED')
+      (l.opportunities ?? []).some(o => o.status === 'ACCEPTED' || o.status === 'DECLINED')
     )
   );
 
   readonly submitPayload = computed((): SubmitPayload => {
     const token = this.workerInfo()?.token ?? '';
     const decisions: AcceptanceDecision[] = this.locations().flatMap(l =>
-      l.opportunities
+      (l.opportunities ?? [])
         .filter(o => o.status === 'ACCEPTED' || o.status === 'DECLINED')
         .map(o => ({
           locationId:       l.id,
@@ -101,7 +113,14 @@ export class AcceptanceStore {
 
   selectLocation(id: string | null): void {
     this.selectedLocationId.set(id);
-    this.selectedOpportunityId.set(null); // clear opp selection when switching area
+    this.selectedOpportunityId.set(null);
+    if (id && !this.isOpportunitiesLoaded(id)) {
+      this.markOpportunitiesLoading(id, true);
+      this.locationService.getOpportunities(id).subscribe({
+        next: opps => this.setOpportunities(id, opps),
+        error: () => this.markOpportunitiesLoading(id, false),
+      });
+    }
   }
 
   selectOpportunity(id: string | null): void {
@@ -119,7 +138,7 @@ export class AcceptanceStore {
           ? l
           : {
               ...l,
-              opportunities: l.opportunities.map(o =>
+              opportunities: (l.opportunities ?? []).map(o =>
                 o.id !== opportunityId
                   ? o
                   : {
@@ -141,7 +160,7 @@ export class AcceptanceStore {
           ? l
           : {
               ...l,
-              opportunities: l.opportunities.map(o =>
+              opportunities: (l.opportunities ?? []).map(o =>
                 o.id === opportunityId && o.status !== 'ACCEPTED_BY_OTHER'
                   ? { ...o, status: 'DECLINED' as const }
                   : o
@@ -155,10 +174,26 @@ export class AcceptanceStore {
     this.locations.update(locs =>
       locs.map(l => ({
         ...l,
-        opportunities: l.opportunities.map(o =>
+        opportunities: (l.opportunities ?? []).map(o =>
           o.status === 'PENDING' ? { ...o, status: 'DECLINED' as const } : o
         ),
       }))
     );
+  }
+
+  setOpportunities(locationId: string, opps: JobOpportunity[]): void {
+    this.locations.update(locs =>
+      locs.map(l => l.id === locationId ? { ...l, opportunities: opps } : l)
+    );
+    this.loadedLocationIds.update(s => new Set([...s, locationId]));
+    this.loadingLocationIds.update(s => { const n = new Set(s); n.delete(locationId); return n; });
+  }
+
+  markOpportunitiesLoading(locationId: string, isLoading: boolean): void {
+    this.loadingLocationIds.update(s => {
+      const n = new Set(s);
+      isLoading ? n.add(locationId) : n.delete(locationId);
+      return n;
+    });
   }
 }

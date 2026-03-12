@@ -57,7 +57,7 @@
                   <button
                     class="area-card"
                     (click)="store.selectLocation(loc.id)"
-                    [attr.aria-label]="loc.name + ', ' + loc.countryName + ', ' + loc.opportunities.length + ' assignments'"
+                    [attr.aria-label]="loc.name + ', ' + loc.countryName + ', ' + (loc.opportunities?.length ?? 0) + ' assignments'"
                   >
                     <div class="area-card-top">
                       <div class="area-card-title-block">
@@ -76,7 +76,7 @@
 
                     <div class="area-card-footer">
                       <div class="status-dots" aria-hidden="true">
-                        @for (opp of loc.opportunities; track opp.id) {
+                        @for (opp of (loc.opportunities ?? []); track opp.id) {
                           <span
                             class="status-dot status-dot--{{ opp.status | statusClass }}"
                             [matTooltip]="(opp.activityType | activityType) + ': ' + opp.status"
@@ -84,7 +84,7 @@
                         }
                       </div>
                       <span class="area-opp-label">
-                        {{ loc.opportunities.length }} assignment{{ loc.opportunities.length !== 1 ? 's' : '' }}
+                        {{ loc.opportunities?.length ?? 0 }} assignment{{ (loc.opportunities?.length ?? 0) !== 1 ? 's' : '' }}
                       </span>
                     </div>
                   </button>

@@ -78,6 +78,13 @@ export class AcceptanceFlowComponent implements OnInit {
         next: locs => {
           this.store.setLocations(locs);
           this.store.setLoading(false);
+          locs.forEach(loc => {
+            this.store.markOpportunitiesLoading(loc.id, true);
+            this.locationService.getOpportunities(loc.id).subscribe({
+              next: opps => this.store.setOpportunities(loc.id, opps),
+              error: () => this.store.markOpportunitiesLoading(loc.id, false),
+            });
+          });
         },
         error: () => {
           this.store.setError('Failed to load locations.');

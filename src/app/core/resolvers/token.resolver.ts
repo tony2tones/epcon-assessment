@@ -23,3 +23,4 @@ export const tokenResolver: ResolveFn<AcceptanceToken | null> = (route) => {
     })
   );
 };
+
